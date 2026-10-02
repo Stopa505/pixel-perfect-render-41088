@@ -10,33 +10,90 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ErrorsRouteImport } from './routes/errors'
+import { Route as GeminiRouteImport } from './routes/gemini'
+import { Route as LessonsRouteImport } from './routes/lessons'
+import { Route as ReviewsRouteImport } from './routes/reviews'
+import { Route as RulesRouteImport } from './routes/rules'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ErrorsRoute = ErrorsRouteImport.update({
+  id: '/errors',
+  path: '/errors',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GeminiRoute = GeminiRouteImport.update({
+  id: '/gemini',
+  path: '/gemini',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LessonsRoute = LessonsRouteImport.update({
+  id: '/lessons',
+  path: '/lessons',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReviewsRoute = ReviewsRouteImport.update({
+  id: '/reviews',
+  path: '/reviews',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RulesRoute = RulesRouteImport.update({
+  id: '/rules',
+  path: '/rules',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/errors': typeof ErrorsRoute
+  '/gemini': typeof GeminiRoute
+  '/lessons': typeof LessonsRoute
+  '/reviews': typeof ReviewsRoute
+  '/rules': typeof RulesRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/errors': typeof ErrorsRoute
+  '/gemini': typeof GeminiRoute
+  '/lessons': typeof LessonsRoute
+  '/reviews': typeof ReviewsRoute
+  '/rules': typeof RulesRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/errors': typeof ErrorsRoute
+  '/gemini': typeof GeminiRoute
+  '/lessons': typeof LessonsRoute
+  '/reviews': typeof ReviewsRoute
+  '/rules': typeof RulesRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/errors' | '/gemini' | '/lessons' | '/reviews' | '/rules'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/errors' | '/gemini' | '/lessons' | '/reviews' | '/rules'
+  id:
+    | '__root__'
+    | '/'
+    | '/errors'
+    | '/gemini'
+    | '/lessons'
+    | '/reviews'
+    | '/rules'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ErrorsRoute: typeof ErrorsRoute
+  GeminiRoute: typeof GeminiRoute
+  LessonsRoute: typeof LessonsRoute
+  ReviewsRoute: typeof ReviewsRoute
+  RulesRoute: typeof RulesRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +105,51 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/errors': {
+      id: '/errors'
+      path: '/errors'
+      fullPath: '/errors'
+      preLoaderRoute: typeof ErrorsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/gemini': {
+      id: '/gemini'
+      path: '/gemini'
+      fullPath: '/gemini'
+      preLoaderRoute: typeof GeminiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lessons': {
+      id: '/lessons'
+      path: '/lessons'
+      fullPath: '/lessons'
+      preLoaderRoute: typeof LessonsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reviews': {
+      id: '/reviews'
+      path: '/reviews'
+      fullPath: '/reviews'
+      preLoaderRoute: typeof ReviewsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rules': {
+      id: '/rules'
+      path: '/rules'
+      fullPath: '/rules'
+      preLoaderRoute: typeof RulesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ErrorsRoute: ErrorsRoute,
+  GeminiRoute: GeminiRoute,
+  LessonsRoute: LessonsRoute,
+  ReviewsRoute: ReviewsRoute,
+  RulesRoute: RulesRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
