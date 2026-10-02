@@ -16,17 +16,17 @@ export const Route = createFileRoute("/reviews")({
   component: Reviews,
 });
 
-const sections = [
-  { k: "intro", t: "1. Introduction", p: "Introduce the film, its director, and the main themes..." },
-  { k: "plot", t: "2. Plot Summary", p: "Summarize the main events of the film..." },
-  { k: "chars", t: "3. Character Analysis", p: "Analyze the main characters and their development..." },
-  { k: "themes", t: "4. Themes & Reflection", p: "Discuss the key themes and your personal reflection..." },
+const sections: { k: "intro" | "plot" | "chars" | "themes"; t: string; p: string }[] = [
+  { k: "intro" as const, t: "1. Introduction", p: "Introduce the film, its director, and the main themes..." },
+  { k: "plot" as const, t: "2. Plot Summary", p: "Summarize the main events of the film..." },
+  { k: "chars" as const, t: "3. Character Analysis", p: "Analyze the main characters and their development..." },
+  { k: "themes" as const, t: "4. Themes & Reflection", p: "Discuss the key themes and your personal reflection..." },
 ];
 const count = (s: string) => s.trim().split(/\s+/).filter(Boolean).length;
 const empty = { title: "", intro: "", plot: "", chars: "", themes: "" };
 
 function Reviews() {
-  const [form, setForm] = useState<Record<string, string>>(empty);
+  const [form, setForm] = useState(empty);
   const [photo, setPhoto] = useState<string | null>(null);
   const [checking, setChecking] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
