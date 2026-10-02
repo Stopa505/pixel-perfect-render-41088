@@ -14,7 +14,144 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      attempts: {
+        Row: {
+          correct: boolean
+          created_at: string
+          id: string
+          topic: string
+          user_id: string
+        }
+        Insert: {
+          correct: boolean
+          created_at?: string
+          id?: string
+          topic: string
+          user_id?: string
+        }
+        Update: {
+          correct?: boolean
+          created_at?: string
+          id?: string
+          topic?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      essays: {
+        Row: {
+          chars: string
+          created_at: string
+          id: string
+          intro: string
+          plot: string
+          themes: string
+          title: string
+          user_id: string
+          word_count: number
+        }
+        Insert: {
+          chars?: string
+          created_at?: string
+          id?: string
+          intro?: string
+          plot?: string
+          themes?: string
+          title: string
+          user_id?: string
+          word_count?: number
+        }
+        Update: {
+          chars?: string
+          created_at?: string
+          id?: string
+          intro?: string
+          plot?: string
+          themes?: string
+          title?: string
+          user_id?: string
+          word_count?: number
+        }
+        Relationships: []
+      }
+      mistakes: {
+        Row: {
+          correct: string
+          created_at: string
+          id: string
+          prompt: string
+          rule: string
+          topic: string
+          user_id: string
+          yours: string
+        }
+        Insert: {
+          correct: string
+          created_at?: string
+          id?: string
+          prompt: string
+          rule?: string
+          topic: string
+          user_id?: string
+          yours?: string
+        }
+        Update: {
+          correct?: string
+          created_at?: string
+          id?: string
+          prompt?: string
+          rule?: string
+          topic?: string
+          user_id?: string
+          yours?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          display_name: string | null
+          email: string | null
+          id: string
+          study_time: string
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string | null
+          email?: string | null
+          id: string
+          study_time?: string
+        }
+        Update: {
+          created_at?: string
+          display_name?: string | null
+          email?: string | null
+          id?: string
+          study_time?: string
+        }
+        Relationships: []
+      }
+      study_sessions: {
+        Row: {
+          created_at: string
+          id: string
+          seconds: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          seconds: number
+          user_id?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          seconds?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
