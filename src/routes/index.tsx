@@ -127,7 +127,7 @@ function TimeCard() {
 
   useEffect(() => {
     const raw = localStorage.getItem("native-time");
-    if (raw) { const [a, b] = raw.split(":").map(Number); setH(a); setM(b); }
+    if (raw) { const [a, b] = raw.split(":").map(Number); setH(a ?? 19); setM(b ?? 15); }
     loaded.current = true;
   }, []);
   useEffect(() => {

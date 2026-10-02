@@ -90,7 +90,7 @@ function Theory() {
             <p className="mt-2 text-sm text-primary/80">{c.f}</p>
             <p className="mt-4 text-sm text-muted-foreground">{c.d}</p>
             <div className="mt-3 space-y-1.5 rounded-lg bg-background p-4 text-sm">
-              {c.ex.map(([a, b]) => <p key={a + b}><b className="text-primary">{a}</b>{b}</p>)}
+              {c.ex.map(([a = "", b = ""]) => <p key={a + b}><b className="text-primary">{a}</b>{b}</p>)}
             </div>
           </section>
         ))}
@@ -103,7 +103,7 @@ function shuffle<T>(a: T[]) { return [...a].sort(() => Math.random() - 0.5); }
 
 function Builder() {
   const [idx, setIdx] = useState(0);
-  const task = builderTasks[idx];
+  const task = builderTasks[idx]!;
   const words = useMemo(() => shuffle(task.answer.split(" ").map((w, i) => ({ w, i }))), [task]);
   const [picked, setPicked] = useState<{ w: string; i: number }[]>([]);
   const [result, setResult] = useState<null | boolean>(null);

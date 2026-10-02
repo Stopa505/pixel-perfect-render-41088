@@ -33,7 +33,7 @@ function Reviews() {
   const total = sections.reduce((n, s) => n + count(form[s.k]), 0);
 
   const save = () => {
-    if (!form.title.trim()) return toast.error("Введите название фильма");
+    if (!form.title.trim()) { toast.error("Введите название фильма"); return; }
     const list = JSON.parse(localStorage.getItem("native-essays") || "[]");
     localStorage.setItem("native-essays", JSON.stringify([...list, { ...form, date: Date.now() }]));
     toast.success(`Эссе «${form.title}» сохранено`);

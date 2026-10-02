@@ -27,7 +27,7 @@ function Gemini() {
   const [show, setShow] = useState(false);
   const [busy, setBusy] = useState(false);
   const verify = () => {
-    if (!key.trim()) return toast.error("Введите API ключ");
+    if (!key.trim()) { toast.error("Введите API ключ"); return; }
     setBusy(true);
     setTimeout(() => {
       setBusy(false);
