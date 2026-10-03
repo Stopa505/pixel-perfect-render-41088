@@ -123,7 +123,7 @@ function Dashboard() {
   );
 }
 
-function TimeCard({ initial }: { initial?: string }) {
+function TimeCard({ initial }: { initial?: string | undefined }) {
   const uid = useAuth().session?.user.id;
   const [h, setH] = useState(19);
   const [m, setM] = useState(15);
