@@ -2,7 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { BookOpen, Check, Flame, Lightbulb, RotateCcw, Sparkles, X } from "lucide-react";
 import { PageHeader } from "@/components/AppShell";
-import { builderTasks, svompt, testQuestions } from "@/lib/data";
+import { builderTasks, ruleHint, svompt, testQuestions } from "@/lib/data";
+import { useRecordAttempt } from "@/lib/api";
 
 export const Route = createFileRoute("/lessons")({
   head: () => ({
@@ -107,6 +108,13 @@ function Builder() {
   const words = useMemo(() => shuffle(task.answer.split(" ").map((w, i) => ({ w, i }))), [task]);
   const [picked, setPicked] = useState<{ w: string; i: number }[]>([]);
   const [result, setResult] = useState<null | boolean>(null);
+  const record = useRecordAttempt();
+  const check = () => {
+    const yours = picked.map((p) => p.w).join(" ");
+    const ok = yours === task.answer;
+    setResult(ok);
+    record.mutate({ topic: task.topic, correct: ok, mistake: { prompt: task.ru, yours, correct: task.answer, rule: ruleHint[task.topic] ?? "" } });
+  };
   const pool = words.filter((x) => !picked.some((p) => p.i === x.i));
   const next = () => { setIdx((idx + 1) % builderTasks.length); setPicked([]); setResult(null); };
 
@@ -129,7 +137,7 @@ function Builder() {
         </p>
       )}
       <div className="mt-6 flex gap-3">
-        <button disabled={pool.length > 0} onClick={() => setResult(picked.map((p) => p.w).join(" ") === task.answer)} className="btn-gold">Проверить</button>
+        <button disabled={pool.length > 0 || result !== null} onClick={check} className="btn-gold">Проверить</button>
         <button onClick={next} className="btn-ghost">Следующее</button>
       </div>
     </section>
@@ -140,6 +148,14 @@ function Test() {
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [done, setDone] = useState(false);
   const score = testQuestions.filter((q, i) => answers[i] === q.a).length;
+  const record = useRecordAttempt();
+  const finish = () => {
+    setDone(true);
+    testQuestions.forEach((q, i) => {
+      const ok = answers[i] === q.a;
+      record.mutate({ topic: q.topic, correct: ok, mistake: { prompt: q.q, yours: q.options[answers[i] ?? 0] ?? "", correct: q.options[q.a] ?? "", rule: ruleHint[q.topic] ?? "" } });
+    });
+  };
   return (
     <div className="space-y-4">
       {done && (
@@ -161,7 +177,7 @@ function Test() {
           </div>
         </section>
       ))}
-      {!done && <button disabled={Object.keys(answers).length < testQuestions.length} onClick={() => setDone(true)} className="btn-gold">Завершить тест</button>}
+      {!done && <button disabled={Object.keys(answers).length < testQuestions.length} onClick={finish} className="btn-gold">Завершить тест</button>}
     </div>
   );
 }

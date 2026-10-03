@@ -1,7 +1,10 @@
 import { Link } from "@tanstack/react-router";
-import type { ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
+import { logStudySeconds } from "@/lib/api";
+import { AuthScreen } from "@/components/AuthScreen";
 import { BookOpen, Bug, Film, GraduationCap, LayoutGrid, LogOut, NotebookText, Sparkles } from "lucide-react";
-import { toast } from "sonner";
 
 export const nav = [
   { to: "/", label: "Личный кабинет", icon: LayoutGrid },
@@ -23,7 +26,30 @@ function Logo() {
   );
 }
 
+function useStudyTimer(active: boolean) {
+  const since = useRef<number | null>(null);
+  useEffect(() => {
+    if (!active) return;
+    const start = () => { since.current = Date.now(); };
+    const flush = () => {
+      if (since.current) { void logStudySeconds((Date.now() - since.current) / 1000); since.current = null; }
+    };
+    const onVis = () => (document.visibilityState === "visible" ? start() : flush());
+    if (document.visibilityState === "visible") start();
+    const t = setInterval(() => { flush(); if (document.visibilityState === "visible") start(); }, 120_000);
+    document.addEventListener("visibilitychange", onVis);
+    window.addEventListener("pagehide", flush);
+    return () => { clearInterval(t); flush(); document.removeEventListener("visibilitychange", onVis); window.removeEventListener("pagehide", flush); };
+  }, [active]);
+}
+
 export function AppShell({ children }: { children: ReactNode }) {
+  const { session, loading } = useAuth();
+  useStudyTimer(!!session);
+  if (loading) return <div className="grid min-h-screen place-items-center text-faint">Загрузка…</div>;
+  if (!session) return <AuthScreen />;
+  const email = session.user.email ?? "";
+  const initials = email.slice(0, 2).toUpperCase();
   return (
     <div className="min-h-screen w-full">
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r bg-card lg:flex">
@@ -43,13 +69,13 @@ export function AppShell({ children }: { children: ReactNode }) {
         </nav>
         <div className="space-y-3 border-t p-4">
           <div className="flex items-center gap-3">
-            <span className="grid size-9 shrink-0 place-items-center rounded-full bg-accent text-xs font-bold text-accent-foreground">SA</span>
+            <span className="grid size-9 shrink-0 place-items-center rounded-full bg-accent text-xs font-bold text-accent-foreground">{initials}</span>
             <div className="min-w-0">
-              <p className="truncate text-sm font-medium">savinstepan456@gmail.com</p>
+              <p className="truncate text-sm font-medium">{email}</p>
               <p className="text-xs text-faint">Студент</p>
             </div>
           </div>
-          <button onClick={() => toast("Вы вышли из аккаунта")} className="btn-ghost w-full">
+          <button onClick={() => supabase.auth.signOut()} className="btn-ghost w-full">
             <LogOut className="size-4" /> Выйти
           </button>
         </div>

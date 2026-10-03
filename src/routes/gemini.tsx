@@ -1,5 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { geminiStatus, verifyGeminiKey } from "@/lib/gemini.functions";
 import { AlertCircle, CheckCircle2, Eye, EyeOff, KeyRound, Loader2, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/AppShell";
@@ -26,13 +29,16 @@ function Gemini() {
   const [key, setKey] = useState("");
   const [show, setShow] = useState(false);
   const [busy, setBusy] = useState(false);
-  const verify = () => {
-    if (!key.trim()) { toast.error("Введите API ключ"); return; }
+  const statusFn = useServerFn(geminiStatus);
+  const verifyFn = useServerFn(verifyGeminiKey);
+  const { data: status } = useQuery({ queryKey: ["gemini-status"], queryFn: () => statusFn() });
+  const verify = async () => {
     setBusy(true);
-    setTimeout(() => {
-      setBusy(false);
-      key.startsWith("AIza") && key.length > 30 ? toast.success("Формат ключа корректен") : toast.error("Ключ выглядит некорректно");
-    }, 900);
+    try {
+      const r = await verifyFn({ data: { key: key.trim() || undefined } });
+      r.ok ? toast.success(r.message) : toast.error(r.message);
+    } catch { toast.error("Не удалось проверить ключ"); }
+    finally { setBusy(false); }
   };
   return (
     <>
@@ -41,7 +47,7 @@ function Gemini() {
         <section className="panel rise p-6">
           <h2 className="flex items-center gap-2 text-xl font-semibold"><KeyRound className="size-5 text-primary" />API ключ Gemini</h2>
           <p className="text-sm text-muted-foreground">Ключ используется для AI-анализа фото эссе и генерации материалов</p>
-          <span className="mt-4 inline-flex items-center gap-1.5 rounded-full border border-primary/50 bg-accent px-3 py-1 text-xs font-semibold text-primary"><AlertCircle className="size-3" />Настроен на сервере</span>
+          <span className="mt-4 inline-flex items-center gap-1.5 rounded-full border border-primary/50 bg-accent px-3 py-1 text-xs font-semibold text-primary"><AlertCircle className="size-3" />{status === undefined ? "Проверяем…" : status.configured ? "Настроен на сервере" : "Не настроен"}</span>
           <label className="mb-2 mt-4 block text-sm font-semibold">Ваш API ключ:</label>
           <div className="flex gap-2">
             <div className="relative flex-1">
@@ -52,7 +58,7 @@ function Gemini() {
             </div>
             <button onClick={verify} disabled={busy} className="btn-gold">{busy && <Loader2 className="size-4 animate-spin" />}Проверить</button>
           </div>
-          <p className="mt-2 text-xs text-faint">Вы можете ввести свой ключ для личной проверки. Получить ключ можно на{" "}
+          <p className="mt-2 text-xs text-faint">Оставьте поле пустым, чтобы проверить ключ сервера, или введите свой ключ для личной проверки. Получить ключ можно на{" "}
             <a href="https://aistudio.google.com/apikey" target="_blank" rel="noreferrer" className="text-primary underline">Google AI Studio</a>.</p>
         </section>
 

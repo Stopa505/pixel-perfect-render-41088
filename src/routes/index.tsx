@@ -1,6 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { ArrowRight, BookOpen, Bug, CalendarDays, Check, ChevronDown, ChevronUp, Clock, Film, Flame, Target, TrendingUp } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { saveStudyTime, useStats } from "@/lib/api";
 import { Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 export const Route = createFileRoute("/")({
@@ -15,30 +17,28 @@ export const Route = createFileRoute("/")({
   component: Dashboard,
 });
 
-const chart = [
-  { topic: "SVOMPT", score: 190, accuracy: 72 },
-  { topic: "ASI", score: 60, accuracy: 70 },
-  { topic: "QUASI", score: 40, accuracy: 100 },
-];
 const colors = ["var(--chart-1)", "var(--chart-2)", "var(--chart-3)"];
 
 function Dashboard() {
+  const { data: st } = useStats();
+  const name = st?.profile?.display_name ?? "";
+  const chart = st?.topics ?? [];
   const stats = [
-    { v: "290", l: "Общий балл", i: TrendingUp },
-    { v: "71%", l: "Точность", i: Target },
-    { v: "0", l: "Кино-рецензии", i: Film },
-    { v: "0 дн.", l: "Стрик", i: Flame },
+    { v: String(st?.score ?? 0), l: "Общий балл", i: TrendingUp },
+    { v: `${st?.accuracy ?? 0}%`, l: "Точность", i: Target },
+    { v: String(st?.essays ?? 0), l: "Кино-рецензии", i: Film },
+    { v: `${st?.streak ?? 0} дн.`, l: "Стрик", i: Flame },
   ];
   return (
     <div className="space-y-6">
       <section className="panel rise flex flex-wrap items-center justify-between gap-5 p-6">
         <div className="flex flex-wrap items-center gap-5">
           <div className="flex items-center gap-3 rounded-lg border bg-surface px-3 py-2">
-            <Flame className="size-4 text-faint" />
-            <div><p className="text-xs font-medium">Стрик неактивен</p><p className="text-[11px] text-faint">Пройдите конструктор</p></div>
+            <Flame className={`size-4 ${st?.activeToday ? "text-primary" : "text-faint"}`} />
+            <div><p className="text-xs font-medium">{st?.activeToday ? `Стрик ${st.streak} дн.` : "Стрик неактивен"}</p><p className="text-[11px] text-faint">{st?.activeToday ? "Сегодня уже занимались" : "Пройдите конструктор"}</p></div>
           </div>
           <div>
-            <h1 className="text-3xl font-semibold">С возвращением, savinstepan456!</h1>
+            <h1 className="text-3xl font-semibold">С возвращением{name ? `, ${name}` : ""}!</h1>
             <p className="mt-1 text-sm text-muted-foreground">Отслеживайте прогресс и продолжайте обучение</p>
           </div>
         </div>
@@ -74,6 +74,7 @@ function Dashboard() {
             </ResponsiveContainer>
           </div>
           <div className="mt-4 flex flex-wrap gap-4 border-t pt-4">
+            {st && st.total === 0 && <p className="text-sm text-faint">Пройдите тест или конструктор — здесь появится ваш прогресс.</p>}
             {chart.map((c, i) => (
               <div key={c.topic} className="flex items-center gap-2 text-sm">
                 <span className="size-2.5 rounded-full" style={{ background: colors[i] }} />
@@ -85,16 +86,19 @@ function Dashboard() {
         </div>
 
         <div className="space-y-6">
-          <TimeCard />
+          <TimeCard initial={st?.profile?.study_time} />
           <div className="panel rise p-6">
             <h2 className="flex items-center gap-2 text-xl font-semibold"><CalendarDays className="size-5 text-primary" />Журнал занятий</h2>
             <p className="text-sm text-muted-foreground">Время, уделённое учёбе</p>
             <div className="mt-4 space-y-3">
-              {[{ t: "Сегодня", s: "Не начат", i: Clock }, { t: "За неделю", s: "0 занятий", i: CalendarDays }].map(({ t, s, i: I }) => (
+              {[
+                { t: "Сегодня", s: st?.todayMin ? "В процессе" : "Не начат", m: st?.todayMin ?? 0, i: Clock },
+                { t: "За неделю", s: `${st?.weekDays ?? 0} дн. с занятиями`, m: st?.weekMin ?? 0, i: CalendarDays },
+              ].map(({ t, s, m, i: I }) => (
                 <div key={t} className="flex items-center gap-3 rounded-lg border bg-surface p-3">
                   <span className="grid size-9 place-items-center rounded-lg bg-accent text-accent-foreground"><I className="size-4" /></span>
                   <div className="flex-1"><p className="text-sm font-medium">{t}</p><p className="text-xs text-faint">{s}</p></div>
-                  <p className="font-display text-xl">0 <span className="text-xs text-faint">мин</span></p>
+                  <p className="font-display text-xl">{m} <span className="text-xs text-faint">мин</span></p>
                 </div>
               ))}
             </div>
@@ -119,24 +123,28 @@ function Dashboard() {
   );
 }
 
-function TimeCard() {
+function TimeCard({ initial }: { initial?: string }) {
+  const uid = useAuth().session?.user.id;
   const [h, setH] = useState(19);
   const [m, setM] = useState(15);
   const [saved, setSaved] = useState(false);
   const loaded = useRef(false);
 
   useEffect(() => {
-    const raw = localStorage.getItem("native-time");
-    if (raw) { const [a, b] = raw.split(":").map(Number); setH(a ?? 19); setM(b ?? 15); }
-    loaded.current = true;
-  }, []);
+    if (!initial || loaded.current) return;
+    const [a, b] = initial.split(":").map(Number);
+    setH(a ?? 19); setM(b ?? 15);
+    setTimeout(() => { loaded.current = true; }, 0);
+  }, [initial]);
   useEffect(() => {
-    if (!loaded.current) return;
-    localStorage.setItem("native-time", `${h}:${m}`);
-    setSaved(true);
-    const t = setTimeout(() => setSaved(false), 1500);
+    if (!loaded.current || !uid) return;
+    const t = setTimeout(async () => {
+      await saveStudyTime(uid, `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`);
+      setSaved(true);
+      setTimeout(() => setSaved(false), 1500);
+    }, 500);
     return () => clearTimeout(t);
-  }, [h, m]);
+  }, [h, m, uid]);
 
   const Seg = ({ v, set, max, step }: { v: number; set: (n: number) => void; max: number; step: number }) => {
     const change = (d: number) => set((v + d * step + max) % max);
