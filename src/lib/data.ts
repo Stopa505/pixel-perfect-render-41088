@@ -22,11 +22,17 @@ export const initialMistakes: Mistake[] = [
 ];
 
 export const builderTasks = [
-  { ru: "Она читает книгу внимательно в библиотеке каждое утро.", answer: "She reads a book carefully in the library every morning" },
-  { ru: "Ты любишь кофе?", answer: "Do you like coffee" },
-  { ru: "Почему она ушла?", answer: "Why did she leave" },
-  { ru: "Мы играем в футбол в парке по субботам.", answer: "We play football in the park on Saturdays" },
+  { topic: "SVOMPT", ru: "Она читает книгу внимательно в библиотеке каждое утро.", answer: "She reads a book carefully in the library every morning" },
+  { topic: "ASI", ru: "Ты любишь кофе?", answer: "Do you like coffee" },
+  { topic: "QUASI", ru: "Почему она ушла?", answer: "Why did she leave" },
+  { topic: "SVOMPT", ru: "Мы играем в футбол в парке по субботам.", answer: "We play football in the park on Saturdays" },
 ];
+
+export const ruleHint: Record<string, string> = {
+  SVOMPT: "Subject + Verb + Object + Manner + Place + Time. Время — в конце, образ действия — перед местом.",
+  ASI: "ASI: Вспом. глагол + Подлежащее + Инфинитив (do/does/did, be, have).",
+  QUASI: "QUASI: Вопросительное слово + Вспом. глагол + Подлежащее + Инфинитив.",
+};
 
 export const testQuestions = [
   { q: "Выберите правильный порядок слов:", options: ["She sings beautifully every day at home", "She sings beautifully at home every day", "She every day sings at home beautifully"], a: 1, topic: "SVOMPT" },
