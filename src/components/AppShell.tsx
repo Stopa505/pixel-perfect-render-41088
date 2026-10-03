@@ -4,10 +4,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { logStudySeconds } from "@/lib/api";
 import { AuthScreen } from "@/components/AuthScreen";
-import { BookOpen, Bug, Film, GraduationCap, LayoutGrid, LogOut, NotebookText, Sparkles } from "lucide-react";
+import { BookOpen, Bug, Film, GraduationCap, LayoutGrid, Layers, LogOut, NotebookText, Sparkles } from "lucide-react";
 
 export const nav = [
   { to: "/", label: "Личный кабинет", icon: LayoutGrid },
+  { to: "/placement", label: "Placement Test", icon: GraduationCap },
+  { to: "/levels", label: "Уровни A · B · C", icon: Layers },
   { to: "/lessons", label: "Уроки", icon: BookOpen },
   { to: "/errors", label: "Мои ошибки", icon: Bug },
   { to: "/reviews", label: "Кино-рецензии", icon: Film },

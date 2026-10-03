@@ -1,9 +1,10 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
-import { BookOpen, Check, Flame, Lightbulb, RotateCcw, Sparkles, X } from "lucide-react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useMemo, useState } from "react";
+import { ArrowRight, BookOpen, CheckCircle2, Flame, Lightbulb, RotateCcw, Sparkles, X } from "lucide-react";
 import { PageHeader } from "@/components/AppShell";
-import { builderTasks, ruleHint, svompt, testQuestions } from "@/lib/data";
+import { ruleHint, svompt, testQuestions } from "@/lib/data";
 import { useRecordAttempt } from "@/lib/api";
+import { getBuilderTasksForBlock, getStoredLevel, levelBlocks, type BuilderTask, type LevelBlockId } from "@/lib/placement";
 
 export const Route = createFileRoute("/lessons")({
   head: () => ({
@@ -103,25 +104,63 @@ function Theory() {
 function shuffle<T>(a: T[]) { return [...a].sort(() => Math.random() - 0.5); }
 
 function Builder() {
+  const [block, setBlock] = useState<LevelBlockId>("A");
+  const [tasks, setTasks] = useState<BuilderTask[]>(getBuilderTasksForBlock("A"));
   const [idx, setIdx] = useState(0);
-  const task = builderTasks[idx]!;
+  const [task, setTask] = useState<BuilderTask>(tasks[0]!);
   const words = useMemo(() => shuffle(task.answer.split(" ").map((w, i) => ({ w, i }))), [task]);
   const [picked, setPicked] = useState<{ w: string; i: number }[]>([]);
   const [result, setResult] = useState<null | boolean>(null);
   const record = useRecordAttempt();
+
+  useEffect(() => {
+    const stored = getStoredLevel();
+    const b = stored.block;
+    const t = getBuilderTasksForBlock(b);
+    setBlock(b);
+    setTasks(t);
+    setTask(t[0]!);
+    setIdx(0);
+    setPicked([]);
+    setResult(null);
+  }, []);
+
   const check = () => {
     const yours = picked.map((p) => p.w).join(" ");
     const ok = yours === task.answer;
     setResult(ok);
-    record.mutate({ topic: task.topic, correct: ok, mistake: { prompt: task.ru, yours, correct: task.answer, rule: ruleHint[task.topic] ?? "" } });
+    const explanation = task.hint || ruleHint[task.topic] || "";
+    record.mutate({ topic: task.topic, correct: ok, mistake: { prompt: task.ru, yours, correct: task.answer, rule: explanation } });
   };
   const pool = words.filter((x) => !picked.some((p) => p.i === x.i));
-  const next = () => { setIdx((idx + 1) % builderTasks.length); setPicked([]); setResult(null); };
+  const next = () => {
+    const ni = (idx + 1) % tasks.length;
+    setIdx(ni);
+    setTask(tasks[ni]!);
+    setPicked([]);
+    setResult(null);
+  };
+  const retry = () => {
+    setPicked([]);
+    setResult(null);
+  };
+  const blk = levelBlocks[block];
 
   return (
     <section className="panel p-6">
-      <p className="text-xs text-faint">Задание {idx + 1} из {builderTasks.length}</p>
+      <div className="mb-4 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <span className="rounded px-2 py-0.5 text-xs font-semibold" style={{ background: blk.color + "22", color: blk.color }}>
+            Block {block}
+          </span>
+          <span className="text-xs text-faint">Задание {idx + 1} из {tasks.length}</span>
+        </div>
+        <Link to="/levels" className="text-xs text-primary hover:underline">Сменить блок</Link>
+      </div>
       <h2 className="mt-1 text-2xl font-semibold">{task.ru}</h2>
+      {task.hint && (
+        <p className="mt-2 flex items-center gap-1.5 text-xs text-faint"><Lightbulb className="size-3" />{task.hint}</p>
+      )}
       <div className={`mt-5 flex min-h-16 flex-wrap gap-2 rounded-lg border border-dashed p-3 ${result === true ? "border-success" : result === false ? "border-destructive" : ""}`}>
         {picked.length === 0 && <span className="text-sm text-faint">Нажимайте на слова, чтобы собрать предложение</span>}
         {picked.map((p) => (
@@ -131,14 +170,48 @@ function Builder() {
       <div className="mt-4 flex flex-wrap gap-2">
         {pool.map((p) => <button key={p.i} onClick={() => setPicked([...picked, p])} className="btn-ghost px-3 py-1.5">{p.w}</button>)}
       </div>
-      {result !== null && (
-        <p className={`mt-4 flex items-center gap-2 text-sm ${result ? "text-success" : "text-destructive"}`}>
-          {result ? <><Check className="size-4" />Верно!</> : <><X className="size-4" />Правильно: {task.answer}</>}
-        </p>
+
+      {result === true && (
+        <div className="fb-correct mt-5 flex items-center gap-3 p-4">
+          <CheckCircle2 className="size-5 shrink-0 text-success" />
+          <div>
+            <p className="font-semibold text-success">Верно!</p>
+            <p className="text-sm text-success/80">Отличная работа — предложение составлено правильно.</p>
+          </div>
+        </div>
       )}
+
+      {result === false && (
+        <div className="fb-wrong mt-5 space-y-3 p-4">
+          <div className="flex items-center gap-3">
+            <X className="size-5 shrink-0 text-destructive" />
+            <p className="font-semibold text-destructive">Неверно</p>
+          </div>
+          <div className="text-sm">
+            <span className="text-muted-foreground">Ваш ответ: </span>
+            <span className="text-destructive line-through">{picked.map((p) => p.w).join(" ") || "—"}</span>
+          </div>
+          <div className="text-sm">
+            <span className="text-muted-foreground">Правильно: </span>
+            <span className="font-medium text-success">{task.answer}</span>
+          </div>
+          <div className="flex gap-2 rounded-lg border border-primary/30 bg-accent p-3 text-sm text-primary">
+            <Lightbulb className="mt-0.5 size-4 shrink-0 text-primary" />
+            <span>{task.hint || ruleHint[task.topic] || "Проверьте порядок слов по правилу."}</span>
+          </div>
+        </div>
+      )}
+
       <div className="mt-6 flex gap-3">
-        <button disabled={pool.length > 0 || result !== null} onClick={check} className="btn-gold">Проверить</button>
-        <button onClick={next} className="btn-ghost">Следующее</button>
+        {result === null && (
+          <button disabled={pool.length > 0} onClick={check} className="btn-gold">Проверить</button>
+        )}
+        {result === false && (
+          <button onClick={retry} className="btn-ghost"><RotateCcw className="size-4" />Попробовать снова</button>
+        )}
+        {result !== null && (
+          <button onClick={next} className="btn-gold">Следующее задание <ArrowRight className="size-4" /></button>
+        )}
       </div>
     </section>
   );
