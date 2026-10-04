@@ -242,7 +242,7 @@ export const blockBuilderTasks: BuilderTask[] = [
 export function getBuilderTasksForBlock(block: LevelBlockId): BuilderTask[] {
   const tasks = blockBuilderTasks.filter((t) => t.block === block);
   const fallback: BuilderTask[] = builderTasks.map((t) => ({
-    topic: t.topic,
+    topic: t.topic as Topic,
     block: "A" as LevelBlockId,
     ru: t.ru,
     answer: t.answer,
