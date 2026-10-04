@@ -5,17 +5,24 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 const MODEL = "gemini-flash-latest";
 const BASE = "https://generativelanguage.googleapis.com/v1beta";
 
+// Accept any key format: Google API keys go in x-goog-api-key, OAuth/Vertex-style tokens as Bearer.
+function authHeaders(key: string): Record<string, string> {
+  return key.startsWith("ya29.") || key.split(".").length === 3
+    ? { Authorization: `Bearer ${key}` }
+    : { "x-goog-api-key": key };
+}
+
 export const geminiStatus = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async () => ({ configured: !!process.env["GEMINI_API_KEY"] }));
 
 export const verifyGeminiKey = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d) => z.object({ key: z.string().max(200).optional() }).parse(d))
+  .inputValidator((d) => z.object({ key: z.string().max(4000).optional() }).parse(d))
   .handler(async ({ data }) => {
     const key = data.key?.trim() || process.env["GEMINI_API_KEY"];
     if (!key) return { ok: false, message: "Ключ не задан" };
-    const res = await fetch(`${BASE}/models?pageSize=1`, { headers: { "x-goog-api-key": key } });
+    const res = await fetch(`${BASE}/models?pageSize=1`, { headers: authHeaders(key) });
     if (res.ok) return { ok: true, message: "Ключ рабочий — Gemini отвечает" };
     return { ok: false, message: res.status === 400 || res.status === 403 ? "Ключ отклонён Google" : `Ошибка Gemini (${res.status})` };
   });
@@ -35,11 +42,12 @@ export const analyzeEssay = createServerFn({ method: "POST" })
       imageBase64: z.string().max(12_000_000).optional(),
       mimeType: z.string().max(50).optional(),
       text: z.string().max(20000).optional(),
+      apiKey: z.string().max(4000).optional(),
     }).refine((v) => v.imageBase64 || v.text, "Нужно фото или текст").parse(d),
   )
   .handler(async ({ data }): Promise<{ ok: true; feedback: EssayFeedback } | { ok: false; message: string }> => {
-    const key = process.env["GEMINI_API_KEY"];
-    if (!key) return { ok: false, message: "Ключ Gemini не настроен на сервере" };
+    const key = data.apiKey?.trim() || process.env["GEMINI_API_KEY"];
+    if (!key) return { ok: false, message: "Ключ Gemini не задан" };
 
     const prompt = `Ты — преподаватель английского. Проверь эссе ученика ТОЛЬКО на грамматику, орфографию и стиль (не оценивай содержание и рассуждения).
 Если дано фото — сначала распознай текст. Ответь строго JSON:
@@ -51,7 +59,7 @@ export const analyzeEssay = createServerFn({ method: "POST" })
 
     const res = await fetch(`${BASE}/models/${MODEL}:generateContent`, {
       method: "POST",
-      headers: { "Content-Type": "application/json", "x-goog-api-key": key },
+      headers: { "Content-Type": "application/json", ...authHeaders(key) },
       body: JSON.stringify({ contents: [{ role: "user", parts }], generationConfig: { responseMimeType: "application/json" } }),
     });
     if (!res.ok) {

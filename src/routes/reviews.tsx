@@ -5,6 +5,7 @@ import { Film, Lightbulb, Loader2, Plus, Save, ScanText, Upload, X } from "lucid
 import { toast } from "sonner";
 import { PageHeader } from "@/components/AppShell";
 import { useEssays, useSaveEssay } from "@/lib/api";
+import { getGeminiKey } from "@/lib/gemini-key";
 import { analyzeEssay, type EssayFeedback } from "@/lib/gemini.functions";
 
 export const Route = createFileRoute("/reviews")({
@@ -62,7 +63,7 @@ function Reviews() {
     try {
       if (mode === "photo" && file && file.size > 8_000_000) { toast.error("Фото слишком большое (макс. 8 МБ)"); return; }
       const payload = mode === "photo" && file ? { imageBase64: await toBase64(file), mimeType: file.type } : { text: fullText };
-      const r = await analyze({ data: payload });
+      const r = await analyze({ data: { ...payload, apiKey: getGeminiKey() || undefined } });
       if (r.ok) setFeedback(r.feedback); else toast.error(r.message);
     } catch {
       toast.error("Не удалось выполнить проверку");
