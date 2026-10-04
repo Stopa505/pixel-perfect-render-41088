@@ -13,10 +13,10 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ErrorsRouteImport } from './routes/errors'
 import { Route as GeminiRouteImport } from './routes/gemini'
 import { Route as LessonsRouteImport } from './routes/lessons'
-import { Route as ReviewsRouteImport } from './routes/reviews'
-import { Route as RulesRouteImport } from './routes/rules'
 import { Route as LevelsRouteImport } from './routes/levels'
 import { Route as PlacementRouteImport } from './routes/placement'
+import { Route as ReviewsRouteImport } from './routes/reviews'
+import { Route as RulesRouteImport } from './routes/rules'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -38,16 +38,6 @@ const LessonsRoute = LessonsRouteImport.update({
   path: '/lessons',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ReviewsRoute = ReviewsRouteImport.update({
-  id: '/reviews',
-  path: '/reviews',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RulesRoute = RulesRouteImport.update({
-  id: '/rules',
-  path: '/rules',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const LevelsRoute = LevelsRouteImport.update({
   id: '/levels',
   path: '/levels',
@@ -58,26 +48,36 @@ const PlacementRoute = PlacementRouteImport.update({
   path: '/placement',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ReviewsRoute = ReviewsRouteImport.update({
+  id: '/reviews',
+  path: '/reviews',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RulesRoute = RulesRouteImport.update({
+  id: '/rules',
+  path: '/rules',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/errors': typeof ErrorsRoute
   '/gemini': typeof GeminiRoute
   '/lessons': typeof LessonsRoute
-  '/reviews': typeof ReviewsRoute
-  '/rules': typeof RulesRoute
   '/levels': typeof LevelsRoute
   '/placement': typeof PlacementRoute
+  '/reviews': typeof ReviewsRoute
+  '/rules': typeof RulesRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/errors': typeof ErrorsRoute
   '/gemini': typeof GeminiRoute
   '/lessons': typeof LessonsRoute
-  '/reviews': typeof ReviewsRoute
-  '/rules': typeof RulesRoute
   '/levels': typeof LevelsRoute
   '/placement': typeof PlacementRoute
+  '/reviews': typeof ReviewsRoute
+  '/rules': typeof RulesRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -85,26 +85,42 @@ export interface FileRoutesById {
   '/errors': typeof ErrorsRoute
   '/gemini': typeof GeminiRoute
   '/lessons': typeof LessonsRoute
-  '/reviews': typeof ReviewsRoute
-  '/rules': typeof RulesRoute
   '/levels': typeof LevelsRoute
   '/placement': typeof PlacementRoute
+  '/reviews': typeof ReviewsRoute
+  '/rules': typeof RulesRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/errors' | '/gemini' | '/lessons' | '/reviews' | '/rules' | '/levels' | '/placement'
+  fullPaths:
+    | '/'
+    | '/errors'
+    | '/gemini'
+    | '/lessons'
+    | '/levels'
+    | '/placement'
+    | '/reviews'
+    | '/rules'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/errors' | '/gemini' | '/lessons' | '/reviews' | '/rules' | '/levels' | '/placement'
+  to:
+    | '/'
+    | '/errors'
+    | '/gemini'
+    | '/lessons'
+    | '/levels'
+    | '/placement'
+    | '/reviews'
+    | '/rules'
   id:
     | '__root__'
     | '/'
     | '/errors'
     | '/gemini'
     | '/lessons'
-    | '/reviews'
-    | '/rules'
     | '/levels'
     | '/placement'
+    | '/reviews'
+    | '/rules'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -112,10 +128,10 @@ export interface RootRouteChildren {
   ErrorsRoute: typeof ErrorsRoute
   GeminiRoute: typeof GeminiRoute
   LessonsRoute: typeof LessonsRoute
-  ReviewsRoute: typeof ReviewsRoute
-  RulesRoute: typeof RulesRoute
   LevelsRoute: typeof LevelsRoute
   PlacementRoute: typeof PlacementRoute
+  ReviewsRoute: typeof ReviewsRoute
+  RulesRoute: typeof RulesRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -148,20 +164,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LessonsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/reviews': {
-      id: '/reviews'
-      path: '/reviews'
-      fullPath: '/reviews'
-      preLoaderRoute: typeof ReviewsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/rules': {
-      id: '/rules'
-      path: '/rules'
-      fullPath: '/rules'
-      preLoaderRoute: typeof RulesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/levels': {
       id: '/levels'
       path: '/levels'
@@ -176,6 +178,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PlacementRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/reviews': {
+      id: '/reviews'
+      path: '/reviews'
+      fullPath: '/reviews'
+      preLoaderRoute: typeof ReviewsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rules': {
+      id: '/rules'
+      path: '/rules'
+      fullPath: '/rules'
+      preLoaderRoute: typeof RulesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -184,10 +200,10 @@ const rootRouteChildren: RootRouteChildren = {
   ErrorsRoute: ErrorsRoute,
   GeminiRoute: GeminiRoute,
   LessonsRoute: LessonsRoute,
-  ReviewsRoute: ReviewsRoute,
-  RulesRoute: RulesRoute,
   LevelsRoute: LevelsRoute,
   PlacementRoute: PlacementRoute,
+  ReviewsRoute: ReviewsRoute,
+  RulesRoute: RulesRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
