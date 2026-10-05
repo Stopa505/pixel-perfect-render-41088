@@ -11,6 +11,8 @@ export const Route = createFileRoute("/rules")({
       { name: "description", content: "Краткий справочник правил английской грамматики с формулами и примерами." },
       { property: "og:title", content: "Справочник правил — NATIVE" },
       { property: "og:description", content: "Краткий справочник правил английской грамматики с формулами и примерами." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Rules,
@@ -28,10 +30,10 @@ function Rules() {
       </div>
       <div className="grid gap-4 md:grid-cols-2">
         {list.map((r) => (
-          <article key={r.topic} className="panel rise p-6">
+          <article key={r.topic} className="panel rise min-w-0 p-4 sm:p-6">
             <span className="rounded bg-accent px-2 py-0.5 text-xs font-semibold text-accent-foreground">{r.topic}</span>
             <h2 className="mt-3 text-xl font-semibold">{r.title}</h2>
-            <p className="mt-2 rounded-lg border border-primary/30 bg-background px-3 py-2 text-sm text-primary">{r.formula}</p>
+            <p className="mt-2 break-words rounded-lg border border-primary/30 bg-background px-3 py-2 text-sm text-primary">{r.formula}</p>
             <p className="mt-3 text-sm text-muted-foreground">{r.body}</p>
             <ul className="mt-3 space-y-1 text-sm">{r.ex.map((e) => <li key={e} className="before:mr-2 before:text-primary before:content-['—']">{e}</li>)}</ul>
           </article>

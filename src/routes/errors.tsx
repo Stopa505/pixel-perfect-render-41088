@@ -12,6 +12,8 @@ export const Route = createFileRoute("/errors")({
       { name: "description", content: "Архив ошибок с правильными ответами и правилами для пересдачи." },
       { property: "og:title", content: "Мои ошибки — NATIVE" },
       { property: "og:description", content: "Архив ошибок с правильными ответами и правилами для пересдачи." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Errors,
@@ -38,13 +40,13 @@ function Errors() {
   return (
     <>
       <PageHeader eyebrow="Журнал ошибок" icon={Bug} title="Мои ошибки" subtitle="Просматривайте свои ошибки, изучайте правильное правило и пересдавайте." />
-      <div className="mb-4 flex items-center justify-between text-sm text-muted-foreground">
+      <div className="mb-4 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 text-sm text-muted-foreground">
         <span>{items.length} ошибок к проверке</span>
         <span className="rounded-full bg-accent px-3 py-1 text-xs font-semibold text-accent-foreground">{items.length} в очереди</span>
       </div>
       {isLoading && <p className="text-faint">Загрузка…</p>}
       {!isLoading && items.length === 0 && (
-        <div className="panel grid place-items-center p-12 text-center">
+        <div className="panel grid place-items-center p-8 text-center sm:p-12">
           <CheckCircle2 className="size-10 text-success" />
           <p className="mt-3 font-display text-2xl">Все ошибки проработаны</p>
           <p className="text-sm text-muted-foreground">Отличная работа — очередь пуста.</p>
@@ -52,8 +54,8 @@ function Errors() {
       )}
       <div className="space-y-4">
         {items.map((m) => (
-          <article key={m.id} className="panel rise space-y-3 p-5">
-            <div className="flex items-center gap-3 text-xs">
+          <article key={m.id} className="panel rise min-w-0 space-y-3 p-4 sm:p-5">
+            <div className="flex flex-wrap items-center gap-3 text-xs">
               <span className="rounded bg-accent px-2 py-0.5 font-semibold text-accent-foreground">{m.topic}</span>
               <span className="text-faint">{new Date(m.created_at).toLocaleDateString("ru-RU")}</span>
             </div>
@@ -68,13 +70,13 @@ function Errors() {
               <Lightbulb className="mt-0.5 size-4 shrink-0" />{m.rule}
             </div>
             {retake === m.id && (
-              <div className="flex gap-2">
+              <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-2">
                 <input autoFocus value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && check(m.id, m.topic, m.correct)} placeholder="Введите правильный ответ…" className="field" />
-                <button onClick={() => check(m.id, m.topic, m.correct)} className="btn-gold"><Check className="size-4" /></button>
+                <button onClick={() => check(m.id, m.topic, m.correct)} className="btn-gold min-h-11 min-w-11 px-3" aria-label="Проверить ответ"><Check className="size-4" /></button>
               </div>
             )}
-            <div className="flex items-center gap-4 pt-1">
-              <button onClick={() => { setRetake(retake === m.id ? null : m.id); setInput(""); }} className="btn-gold py-2"><RotateCcw className="size-4" />Пересдать</button>
+            <div className="flex flex-wrap items-center gap-4 pt-1">
+              <button onClick={() => { setRetake(retake === m.id ? null : m.id); setInput(""); }} className="btn-gold min-h-11"><RotateCcw className="size-4" />Пересдать</button>
               <button onClick={() => del.mutate(m.id)} className="flex items-center gap-1.5 text-sm font-medium hover:text-destructive"><Trash2 className="size-4" />Удалить</button>
             </div>
           </article>

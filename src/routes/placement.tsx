@@ -16,6 +16,10 @@ export const Route = createFileRoute("/placement")({
     meta: [
       { title: "Placement Test — NATIVE" },
       { name: "description", content: "Определите уровень английского и получите рекомендованный блок обучения." },
+      { property: "og:title", content: "Placement Test — NATIVE" },
+      { property: "og:description", content: "Определите уровень английского и получите рекомендованный блок обучения." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Placement,
@@ -70,7 +74,7 @@ function Placement() {
           title="Placement Test"
           subtitle="Пройдите короткий тест из 18 вопросов, чтобы определить ваш уровень английского и получить рекомендованный блок обучения."
         />
-        <div className="panel rise p-8 text-center">
+        <div className="panel rise p-5 text-center sm:p-8">
           <span className="mx-auto grid size-16 place-items-center rounded-2xl bg-accent">
             <ClipboardList className="size-8 text-primary" />
           </span>
@@ -89,7 +93,7 @@ function Placement() {
             </div>
             <span className="text-xs text-faint">18 вопросов · примерно 5 минут</span>
           </div>
-          <button onClick={() => setPhase("quiz")} className="btn-gold mx-auto mt-8">
+          <button onClick={() => setPhase("quiz")} className="btn-gold mx-auto mt-8 min-h-11 w-full sm:w-auto">
             Начать тест <ArrowRight className="size-4" />
           </button>
           {stored?.placementDone && (
@@ -119,7 +123,7 @@ function Placement() {
           title="Ваш уровень определён"
           subtitle="На основе ваших ответов мы подобрали оптимальный блок обучения."
         />
-        <div className="panel rise mb-6 p-8 text-center" style={{ borderColor: block.color + "60" }}>
+        <div className="panel rise mb-6 p-5 text-center sm:p-8" style={{ borderColor: block.color + "60" }}>
           <span className="text-4xl">{block.badge}</span>
           <h2 className="mt-3 font-display text-3xl" style={{ color: block.color }}>{block.title}</h2>
           <p className="mt-1 text-sm text-muted-foreground">{block.subtitle}</p>
@@ -139,12 +143,12 @@ function Placement() {
               );
             })}
           </div>
-          <div className="mt-8 flex justify-center gap-3">
-            <Link to="/levels" className="btn-gold">Подробнее о блоке <ArrowRight className="size-4" /></Link>
-            <Link to="/lessons" className="btn-ghost">К урокам</Link>
+          <div className="mt-8 grid gap-3 sm:flex sm:justify-center">
+            <Link to="/levels" className="btn-gold min-h-11">Подробнее о блоке <ArrowRight className="size-4" /></Link>
+            <Link to="/lessons" className="btn-ghost min-h-11">К урокам</Link>
           </div>
         </div>
-        <div className="panel rise p-6">
+        <div className="panel rise p-4 sm:p-6">
           <div className="flex items-center gap-3">
             <CheckCircle2 className="size-5 text-success" />
             <p className="text-sm text-muted-foreground">
@@ -170,7 +174,7 @@ function Placement() {
       <div className="mb-6 h-2 overflow-hidden rounded-full bg-surface">
         <div className="h-full rounded-full bg-primary transition-all duration-300" style={{ width: `${progress}%` }} />
       </div>
-      <section key={current} className="panel rise p-6">
+      <section key={current} className="panel rise p-4 sm:p-6">
         <span className="rounded bg-accent px-2 py-0.5 text-xs font-semibold text-primary">
           Block {q.block}
         </span>
@@ -182,7 +186,7 @@ function Placement() {
               <button
                 key={j}
                 onClick={() => select(j)}
-                className={`rounded-lg border px-4 py-3 text-left text-sm transition-all hover:border-primary ${
+                 className={`min-h-11 rounded-lg border px-4 py-3 text-left text-sm transition-all hover:border-primary ${
                   sel ? "border-primary bg-accent" : "border-border bg-surface"
                 }`}
               >

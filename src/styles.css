@@ -31,6 +31,8 @@
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-success: var(--success);
+  --color-success-surface: var(--success-surface);
+  --color-error-surface: var(--error-surface);
   --color-info: var(--info);
   --color-border: var(--border);
   --color-input: var(--input);
@@ -61,6 +63,8 @@
   --destructive: oklch(0.65 0.15 20);
   --destructive-foreground: oklch(1 0 0);
   --success: oklch(0.74 0.12 155);
+  --success-surface: #2e4a3b;
+  --error-surface: #4a2e2e;
   --info: oklch(0.72 0.09 230);
   --border: oklch(0.315 0.004 106);            /* #333330 */
   --input: oklch(0.315 0.004 106);
@@ -73,7 +77,10 @@
 
 @layer base {
   * { border-color: var(--color-border); }
+  html { min-width: 320px; overflow-x: clip; }
   html, body { background-color: var(--color-background); color: var(--color-foreground); font-family: var(--font-sans); }
+  body { min-height: 100dvh; overflow-x: clip; }
+  input, textarea, select { scroll-margin-block: 7rem 35dvh; }
   h1, h2, h3, .font-display { font-family: var(--font-display); letter-spacing: -0.01em; }
   ::selection { background: oklch(0.78 0.09 70 / 35%); }
 }
@@ -100,7 +107,7 @@
 }
 @utility field {
   width: 100%; background: var(--color-background); border: 1px solid var(--color-border);
-  border-radius: var(--radius-md); padding: .7rem .9rem; font-size: .9rem; color: var(--color-foreground);
+  border-radius: var(--radius-md); padding: .7rem .9rem; font-size: 1rem; color: var(--color-foreground);
   outline: none; transition: border-color .15s;
   &::placeholder { color: var(--color-faint); }
   &:focus { border-color: var(--color-primary); }
@@ -108,15 +115,29 @@
 @utility rise {
   animation: rise .45s cubic-bezier(.2,.7,.2,1) both;
 }
+@utility safe-top {
+  padding-top: max(.75rem, env(safe-area-inset-top));
+}
+@utility safe-bottom {
+  padding-bottom: max(1rem, env(safe-area-inset-bottom));
+}
 @keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 
 @utility fb-correct {
-  background: #2e4a3b;
+  background: var(--color-success-surface);
   border: 1px solid oklch(0.74 0.12 155 / 40%);
   border-radius: var(--radius-lg);
 }
 @utility fb-wrong {
-  background: #4a2e2e;
+  background: var(--color-error-surface);
   border: 1px solid oklch(0.65 0.15 20 / 40%);
   border-radius: var(--radius-lg);
+}
+
+@media (min-width: 768px) {
+  .field { font-size: .9rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }

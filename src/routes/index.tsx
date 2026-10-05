@@ -12,6 +12,8 @@ export const Route = createFileRoute("/")({
       { name: "description", content: "Прогресс, статистика и время обучения английскому в NATIVE." },
       { property: "og:title", content: "Личный кабинет — NATIVE" },
       { property: "og:description", content: "Прогресс, статистика и время обучения английскому в NATIVE." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Dashboard,
@@ -31,23 +33,23 @@ function Dashboard() {
   ];
   return (
     <div className="space-y-6">
-      <section className="panel rise flex flex-wrap items-center justify-between gap-5 p-6">
-        <div className="flex flex-wrap items-center gap-5">
+      <section className="panel rise grid grid-cols-1 items-center gap-5 p-4 sm:p-6 md:grid-cols-[minmax(0,1fr)_auto]">
+        <div className="grid min-w-0 gap-4 sm:grid-cols-[auto_minmax(0,1fr)] sm:items-center sm:gap-5">
           <div className="flex items-center gap-3 rounded-lg border bg-surface px-3 py-2">
             <Flame className={`size-4 ${st?.activeToday ? "text-primary" : "text-faint"}`} />
             <div><p className="text-xs font-medium">{st?.activeToday ? `Стрик ${st.streak} дн.` : "Стрик неактивен"}</p><p className="text-[11px] text-faint">{st?.activeToday ? "Сегодня уже занимались" : "Пройдите конструктор"}</p></div>
           </div>
-          <div>
-            <h1 className="text-3xl font-semibold">С возвращением{name ? `, ${name}` : ""}!</h1>
+          <div className="min-w-0">
+            <h1 className="break-words text-2xl font-semibold sm:text-3xl">С возвращением{name ? `, ${name}` : ""}!</h1>
             <p className="mt-1 text-sm text-muted-foreground">Отслеживайте прогресс и продолжайте обучение</p>
           </div>
         </div>
-        <Link to="/lessons" className="btn-gold"><BookOpen className="size-4" />Продолжить обучение</Link>
+        <Link to="/lessons" className="btn-gold min-h-11 w-full md:w-auto"><BookOpen className="size-4" />Продолжить обучение</Link>
       </section>
 
-      <section className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+      <section className="grid grid-cols-1 gap-3 min-[390px]:grid-cols-2 sm:gap-4 lg:grid-cols-4">
         {stats.map(({ v, l, i: I }, n) => (
-          <div key={l} className="panel rise p-5" style={{ animationDelay: `${n * 60}ms` }}>
+          <div key={l} className="panel rise min-w-0 p-4 sm:p-5" style={{ animationDelay: `${n * 60}ms` }}>
             <span className="grid size-9 place-items-center rounded-lg bg-accent text-accent-foreground"><I className="size-4" /></span>
             <p className="mt-4 font-display text-3xl font-semibold">{v}</p>
             <p className="text-sm text-muted-foreground">{l}</p>
@@ -56,10 +58,10 @@ function Dashboard() {
       </section>
 
       <section className="grid gap-6 lg:grid-cols-[1fr_320px]">
-        <div className="panel rise p-6">
+        <div className="panel rise min-w-0 p-4 sm:p-6">
           <h2 className="text-xl font-semibold">Прогресс по грамматике</h2>
           <p className="text-sm text-muted-foreground">Балл и точность по темам SVOMPT, ASI и QUASI</p>
-          <div className="mt-6 h-64">
+          <div className="mt-6 h-56 min-w-0 sm:h-64">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={chart}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
@@ -87,7 +89,7 @@ function Dashboard() {
 
         <div className="space-y-6">
           <TimeCard initial={st?.profile?.study_time} />
-          <div className="panel rise p-6">
+          <div className="panel rise p-4 sm:p-6">
             <h2 className="flex items-center gap-2 text-xl font-semibold"><CalendarDays className="size-5 text-primary" />Журнал занятий</h2>
             <p className="text-sm text-muted-foreground">Время, уделённое учёбе</p>
             <div className="mt-4 space-y-3">
@@ -95,9 +97,9 @@ function Dashboard() {
                 { t: "Сегодня", s: st?.todayMin ? "В процессе" : "Не начат", m: st?.todayMin ?? 0, i: Clock },
                 { t: "За неделю", s: `${st?.weekDays ?? 0} дн. с занятиями`, m: st?.weekMin ?? 0, i: CalendarDays },
               ].map(({ t, s, m, i: I }) => (
-                <div key={t} className="flex items-center gap-3 rounded-lg border bg-surface p-3">
+                <div key={t} className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 rounded-lg border bg-surface p-3">
                   <span className="grid size-9 place-items-center rounded-lg bg-accent text-accent-foreground"><I className="size-4" /></span>
-                  <div className="flex-1"><p className="text-sm font-medium">{t}</p><p className="text-xs text-faint">{s}</p></div>
+                   <div className="min-w-0"><p className="text-sm font-medium">{t}</p><p className="text-xs text-faint">{s}</p></div>
                   <p className="font-display text-xl">{m} <span className="text-xs text-faint">мин</span></p>
                 </div>
               ))}
@@ -114,7 +116,7 @@ function Dashboard() {
         ].map(({ to, t, s, i: I }) => (
           <Link key={to} to={to} className="panel group flex items-center gap-4 p-5 transition-colors hover:border-primary">
             <span className="grid size-10 place-items-center rounded-lg bg-accent text-accent-foreground"><I className="size-5" /></span>
-            <div className="flex-1"><p className="font-medium">{t}</p><p className="text-sm text-muted-foreground">{s}</p></div>
+            <div className="min-w-0 flex-1"><p className="font-medium">{t}</p><p className="text-sm text-muted-foreground">{s}</p></div>
             <ArrowRight className="size-4 text-faint transition-transform group-hover:translate-x-1 group-hover:text-primary" />
           </Link>
         ))}
@@ -164,7 +166,7 @@ function TimeCard({ initial }: { initial?: string | undefined }) {
   };
 
   return (
-    <div className="panel rise p-6">
+    <div className="panel rise p-4 sm:p-6">
       <h2 className="flex items-center gap-2 text-xl font-semibold"><Clock className="size-5 text-primary" />Время обучения</h2>
       <p className="text-sm text-muted-foreground">Выберите удобное время для занятий</p>
       <div className="mt-4 flex items-center justify-center gap-1 rounded-full border bg-background px-4 py-1">
