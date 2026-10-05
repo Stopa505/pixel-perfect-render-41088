@@ -35,8 +35,8 @@ export function AuthScreen() {
   };
 
   return (
-    <div className="grid min-h-screen place-items-center px-4">
-      <div className="panel rise w-full max-w-sm p-8">
+    <div className="grid min-h-dvh items-start overflow-y-auto px-3 py-5 sm:place-items-center sm:px-4 sm:py-8">
+      <div className="panel rise w-full max-w-sm p-5 sm:p-8">
         <div className="mb-6 flex items-center gap-2.5">
           <span className="grid size-10 place-items-center rounded-lg bg-primary text-primary-foreground"><GraduationCap className="size-5" /></span>
           <span className="font-display text-3xl font-semibold tracking-[0.12em]">NATIVE</span>

@@ -8,3 +8,5 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Build authenticated app pages mobile-first: use a drawer below `lg`, dynamic viewport units, and stack action rows on narrow screens because every learning flow must remain usable with a virtual keyboard.
