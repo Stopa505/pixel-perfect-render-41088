@@ -194,7 +194,11 @@ export function getStoredLevel(): StoredLevel {
 
 export function setStoredLevel(data: StoredLevel): void {
   if (typeof window === "undefined") return;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch {
+    /* noop */
+  }
 }
 
 export function setActiveBlock(block: LevelBlockId): void {

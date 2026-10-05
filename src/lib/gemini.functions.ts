@@ -18,7 +18,7 @@ export const geminiStatus = createServerFn({ method: "GET" })
 
 export const verifyGeminiKey = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d) => z.object({ key: z.string().max(4000).optional() }).parse(d))
+  .validator((d) => z.object({ key: z.string().max(4000).optional() }).parse(d))
   .handler(async ({ data }) => {
     const key = data.key?.trim() || process.env["GEMINI_API_KEY"];
     if (!key) return { ok: false, message: "Ключ не задан" };
@@ -37,7 +37,7 @@ export type EssayFeedback = z.infer<typeof Feedback>;
 
 export const analyzeEssay = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d) =>
+  .validator((d) =>
     z.object({
       imageBase64: z.string().max(12_000_000).optional(),
       mimeType: z.string().max(50).optional(),

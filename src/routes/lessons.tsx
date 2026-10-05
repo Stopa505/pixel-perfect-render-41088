@@ -106,28 +106,39 @@ function Theory() {
 function shuffle<T>(a: T[]) { return [...a].sort(() => Math.random() - 0.5); }
 
 function Builder() {
+  const initialTasks = getBuilderTasksForBlock("A");
   const [block, setBlock] = useState<LevelBlockId>("A");
-  const [tasks, setTasks] = useState<BuilderTask[]>(getBuilderTasksForBlock("A"));
+  const [tasks, setTasks] = useState<BuilderTask[]>(initialTasks);
   const [idx, setIdx] = useState(0);
-  const [task, setTask] = useState<BuilderTask>(tasks[0]!);
-  const words = useMemo(() => shuffle(task.answer.split(" ").map((w, i) => ({ w, i }))), [task]);
+  const [task, setTask] = useState<BuilderTask>(initialTasks[0] ?? { topic: "SVOMPT", ru: "", answer: "", block: "A", hint: "" });
   const [picked, setPicked] = useState<{ w: string; i: number }[]>([]);
   const [result, setResult] = useState<null | boolean>(null);
   const record = useRecordAttempt();
 
   useEffect(() => {
-    const stored = getStoredLevel();
-    const b = stored.block;
-    const t = getBuilderTasksForBlock(b);
-    setBlock(b);
-    setTasks(t);
-    setTask(t[0]!);
-    setIdx(0);
-    setPicked([]);
-    setResult(null);
+    try {
+      const stored = getStoredLevel();
+      const b = stored.block;
+      const t = getBuilderTasksForBlock(b);
+      if (t.length === 0) return;
+      setBlock(b);
+      setTasks(t);
+      setTask(t[0]!);
+      setIdx(0);
+      setPicked([]);
+      setResult(null);
+    } catch {
+      /* keep defaults */
+    }
   }, []);
 
+  const words = useMemo(
+    () => shuffle(task.answer.split(" ").map((w, i) => ({ w, i }))),
+    [task],
+  );
+
   const check = () => {
+    if (result !== null) return;
     const yours = picked.map((p) => p.w).join(" ");
     const ok = yours === task.answer;
     setResult(ok);
