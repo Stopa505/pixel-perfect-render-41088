@@ -12,6 +12,8 @@ export const Route = createFileRoute("/errors")({
       { name: "description", content: "Архив ошибок с правильными ответами и правилами для пересдачи." },
       { property: "og:title", content: "Мои ошибки — NATIVE" },
       { property: "og:description", content: "Архив ошибок с правильными ответами и правилами для пересдачи." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Errors,

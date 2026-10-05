@@ -11,6 +11,8 @@ export const Route = createFileRoute("/rules")({
       { name: "description", content: "Краткий справочник правил английской грамматики с формулами и примерами." },
       { property: "og:title", content: "Справочник правил — NATIVE" },
       { property: "og:description", content: "Краткий справочник правил английской грамматики с формулами и примерами." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Rules,

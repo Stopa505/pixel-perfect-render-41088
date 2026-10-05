@@ -15,6 +15,10 @@ export const Route = createFileRoute("/levels")({
     meta: [
       { title: "Уровни — NATIVE" },
       { name: "description", content: "Три блока обучения: A (A1–A2), B (B1–B2), C (C1–C2). Выберите подходящий и переключайтесь вручную." },
+      { property: "og:title", content: "Уровни английского — NATIVE" },
+      { property: "og:description", content: "Выберите учебный блок A, B или C по уровню английского." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Levels,

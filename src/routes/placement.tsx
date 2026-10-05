@@ -16,6 +16,10 @@ export const Route = createFileRoute("/placement")({
     meta: [
       { title: "Placement Test — NATIVE" },
       { name: "description", content: "Определите уровень английского и получите рекомендованный блок обучения." },
+      { property: "og:title", content: "Placement Test — NATIVE" },
+      { property: "og:description", content: "Определите уровень английского и получите рекомендованный блок обучения." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Placement,

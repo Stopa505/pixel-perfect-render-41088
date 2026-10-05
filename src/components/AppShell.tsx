@@ -49,7 +49,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const { session, loading } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   useStudyTimer(!!session);
-  if (loading) return <div className="grid min-h-screen place-items-center text-faint">Загрузка…</div>;
+  if (loading) return <div className="grid min-h-dvh place-items-center text-faint">Загрузка…</div>;
   if (!session) return <AuthScreen />;
   const email = session.user.email ?? "";
   const initials = email.slice(0, 2).toUpperCase();

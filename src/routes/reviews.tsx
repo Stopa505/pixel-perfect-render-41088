@@ -15,6 +15,8 @@ export const Route = createFileRoute("/reviews")({
       { name: "description", content: "Пишите структурированные рецензии на фильмы и проверяйте фото эссе с AI." },
       { property: "og:title", content: "Эссе по фильмам — NATIVE" },
       { property: "og:description", content: "Пишите структурированные рецензии на фильмы и проверяйте фото эссе с AI." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Reviews,

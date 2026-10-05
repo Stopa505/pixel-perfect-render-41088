@@ -12,6 +12,8 @@ export const Route = createFileRoute("/")({
       { name: "description", content: "Прогресс, статистика и время обучения английскому в NATIVE." },
       { property: "og:title", content: "Личный кабинет — NATIVE" },
       { property: "og:description", content: "Прогресс, статистика и время обучения английскому в NATIVE." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Dashboard,

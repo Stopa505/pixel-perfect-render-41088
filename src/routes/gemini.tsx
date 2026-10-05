@@ -15,6 +15,8 @@ export const Route = createFileRoute("/gemini")({
       { name: "description", content: "Настройка Google Gemini AI для проверки эссе и генерации материалов." },
       { property: "og:title", content: "Интеграция с Gemini — NATIVE" },
       { property: "og:description", content: "Настройка Google Gemini AI для проверки эссе и генерации материалов." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Gemini,

@@ -13,6 +13,8 @@ export const Route = createFileRoute("/lessons")({
       { name: "description", content: "Теория SVOMPT, ASI и QUASI, конструктор предложений и тесты." },
       { property: "og:title", content: "Интерактивные уроки — NATIVE" },
       { property: "og:description", content: "Теория SVOMPT, ASI и QUASI, конструктор предложений и тесты." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Lessons,
