@@ -47,7 +47,7 @@ function Levels() {
         title="Блоки A, B, C"
         subtitle="Три блока по уровням CEFR. Пройдите тест для автоматического определения или выберите блок вручную."
         right={
-          <Link to="/placement" className="btn-gold">
+          <Link to="/placement" className="btn-gold min-h-11 w-full sm:w-auto">
             <ClipboardList className="size-4" />Placement Test
           </Link>
         }
@@ -59,26 +59,26 @@ function Levels() {
           return (
             <article
               key={block.id}
-              className="panel rise p-6"
+              className="panel rise p-4 sm:p-6"
               style={{ borderColor: isActive ? block.color + "80" : undefined }}
             >
-              <div className="flex flex-wrap items-start justify-between gap-4">
-                <div className="flex items-center gap-4">
+              <div className="grid grid-cols-1 items-start gap-4 sm:grid-cols-[minmax(0,1fr)_auto]">
+                <div className="flex min-w-0 items-center gap-3 sm:gap-4">
                   <span
-                    className="grid size-14 shrink-0 place-items-center rounded-2xl text-2xl font-bold"
+                    className="grid size-12 shrink-0 place-items-center rounded-lg text-xl font-bold sm:size-14 sm:text-2xl"
                     style={{ background: block.color + "22", color: block.color }}
                   >
                     {block.id}
                   </span>
-                  <div>
-                    <div className="flex items-center gap-2">
+                  <div className="min-w-0">
+                    <div className="flex min-w-0 items-center gap-2">
                       <span className="text-2xl">{block.badge}</span>
-                      <h2 className="font-display text-2xl font-semibold">{block.title}</h2>
+                      <h2 className="break-words font-display text-xl font-semibold sm:text-2xl">{block.title}</h2>
                     </div>
                     <p className="text-sm text-muted-foreground">{block.subtitle}</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-3 sm:justify-end">
                   {isActive && (
                     <span
                       className="flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold"
@@ -90,7 +90,7 @@ function Levels() {
                   <button
                     onClick={() => switchBlock(block.id)}
                     disabled={isActive}
-                    className="btn-gold"
+                    className="btn-gold min-h-11 flex-1 sm:flex-none"
                     style={isActive ? { opacity: 0.4 } : undefined}
                   >
                     {isActive ? "Текущий блок" : "Выбрать блок"}
@@ -160,8 +160,8 @@ function Levels() {
               </div>
 
               {isActive && (
-                <div className="mt-6 flex items-center gap-3 border-t pt-4">
-                  <Link to="/lessons" className="btn-ghost">
+                <div className="mt-6 grid gap-3 border-t pt-4 sm:grid-cols-[auto_minmax(0,1fr)] sm:items-center">
+                  <Link to="/lessons" className="btn-ghost min-h-11 w-full sm:w-auto">
                     К конструктору <ArrowRight className="size-4" />
                   </Link>
                   <span className="text-xs text-faint">

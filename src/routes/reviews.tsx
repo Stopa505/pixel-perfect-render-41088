@@ -75,24 +75,24 @@ function Reviews() {
   return (
     <>
       <PageHeader eyebrow="Кино-рецензии" icon={Film} title="Эссе по фильмам" subtitle="Пишите структурированные рецензии и загружайте фото эссе для AI-анализа грамматики."
-        right={<button onClick={() => { setForm(empty); setFile(null); setFeedback(null); }} className="btn-ghost"><Plus className="size-4" />Новое эссе</button>} />
+        right={<button onClick={() => { setForm(empty); setFile(null); setFeedback(null); }} className="btn-ghost min-h-11 w-full sm:w-auto"><Plus className="size-4" />Новое эссе</button>} />
 
-      <section className="panel rise mb-6 border-primary/40 bg-accent p-6">
+      <section className="panel rise mb-6 border-primary/40 bg-accent p-4 sm:p-6">
         <div className="flex gap-3">
-          <ScanText className="mt-1 size-5 text-primary" />
-          <div><h2 className="text-xl font-semibold">AI-анализ фото эссе</h2>
+          <ScanText className="mt-1 size-5 shrink-0 text-primary" />
+          <div className="min-w-0"><h2 className="text-xl font-semibold">AI-анализ фото эссе</h2>
             <p className="text-sm text-muted-foreground">Загрузите фото рукописного или печатного эссе для проверки грамматики, орфографии и стиля</p></div>
         </div>
         {file && (
           <div className="relative mt-4 inline-block">
-            <img src={URL.createObjectURL(file)} alt="Фото эссе" className="h-32 rounded-lg border object-cover" />
+            <img src={URL.createObjectURL(file)} alt="Фото эссе" className="h-32 max-w-full rounded-lg border object-cover" />
             <button onClick={() => setFile(null)} className="absolute -right-2 -top-2 grid size-6 place-items-center rounded-full border bg-card"><X className="size-3" /></button>
           </div>
         )}
         <div className="mt-4 flex flex-wrap gap-3">
           <input ref={fileRef} type="file" accept="image/*" hidden onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
-          <button onClick={() => fileRef.current?.click()} className="btn-ghost"><Upload className="size-4" />Загрузить фото</button>
-          <button disabled={!file || checking} onClick={() => run("photo")} className="btn-gold">
+          <button onClick={() => fileRef.current?.click()} className="btn-ghost min-h-11 w-full sm:w-auto"><Upload className="size-4" />Загрузить фото</button>
+          <button disabled={!file || checking} onClick={() => run("photo")} className="btn-gold min-h-11 w-full sm:w-auto">
             {checking ? <Loader2 className="size-4 animate-spin" /> : <ScanText className="size-4" />}Проверить эссе
           </button>
         </div>
@@ -100,8 +100,8 @@ function Reviews() {
       </section>
 
       {feedback && (
-        <section className="panel rise mb-6 p-6">
-          <div className="flex items-center justify-between gap-4">
+        <section className="panel rise mb-6 p-4 sm:p-6">
+          <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4">
             <h2 className="text-xl font-semibold">Результат проверки</h2>
             <span className="font-display text-3xl text-primary">{Math.round(feedback.score)}<span className="text-base text-faint">/100</span></span>
           </div>
@@ -109,7 +109,7 @@ function Reviews() {
           <div className="mt-4 space-y-2">
             {feedback.issues.length === 0 && <p className="text-sm text-success">Ошибок не найдено 🎉</p>}
             {feedback.issues.map((i, n) => (
-              <div key={n} className="rounded-lg border bg-surface p-3 text-sm">
+              <div key={n} className="break-words rounded-lg border bg-surface p-3 text-sm">
                 <span className="mr-2 rounded bg-accent px-1.5 py-0.5 text-xs font-semibold text-accent-foreground">{i.type}</span>
                 <span className="text-destructive line-through">{i.original}</span> → <span className="text-success">{i.fix}</span>
                 <p className="mt-1 text-muted-foreground">{i.explanation}</p>
@@ -119,7 +119,7 @@ function Reviews() {
         </section>
       )}
 
-      <section className="panel rise space-y-6 p-6">
+      <section className="panel rise space-y-6 p-4 sm:p-6">
         <div>
           <label className="mb-2 block text-xs text-faint">Название фильма</label>
           <input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="Введите название фильма..." className="field font-display text-lg" />
@@ -133,9 +133,9 @@ function Reviews() {
         ))}
         <div className="flex flex-wrap items-center justify-between gap-3 border-t pt-5">
           <p className="text-sm text-muted-foreground">Всего: <b className="text-foreground">{total} слов</b></p>
-          <div className="flex gap-3">
-            <button disabled={total < 5 || checking} onClick={() => run("text")} className="btn-ghost"><ScanText className="size-4" />Проверить текст</button>
-            <button disabled={save.isPending} onClick={onSave} className="btn-gold"><Save className="size-4" />Сохранить эссе</button>
+          <div className="grid w-full gap-3 sm:flex sm:w-auto">
+            <button disabled={total < 5 || checking} onClick={() => run("text")} className="btn-ghost min-h-11"><ScanText className="size-4" />Проверить текст</button>
+            <button disabled={save.isPending} onClick={onSave} className="btn-gold min-h-11"><Save className="size-4" />Сохранить эссе</button>
           </div>
         </div>
       </section>
