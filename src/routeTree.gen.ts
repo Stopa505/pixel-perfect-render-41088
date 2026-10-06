@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DialoguesRouteImport } from './routes/dialogues'
 import { Route as ErrorsRouteImport } from './routes/errors'
+import { Route as GamesRouteImport } from './routes/games'
 import { Route as GeminiRouteImport } from './routes/gemini'
 import { Route as LessonsRouteImport } from './routes/lessons'
 import { Route as LevelsRouteImport } from './routes/levels'
@@ -32,6 +33,11 @@ const DialoguesRoute = DialoguesRouteImport.update({
 const ErrorsRoute = ErrorsRouteImport.update({
   id: '/errors',
   path: '/errors',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GamesRoute = GamesRouteImport.update({
+  id: '/games',
+  path: '/games',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GeminiRoute = GeminiRouteImport.update({
@@ -69,6 +75,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dialogues': typeof DialoguesRoute
   '/errors': typeof ErrorsRoute
+  '/games': typeof GamesRoute
   '/gemini': typeof GeminiRoute
   '/lessons': typeof LessonsRoute
   '/levels': typeof LevelsRoute
@@ -80,6 +87,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dialogues': typeof DialoguesRoute
   '/errors': typeof ErrorsRoute
+  '/games': typeof GamesRoute
   '/gemini': typeof GeminiRoute
   '/lessons': typeof LessonsRoute
   '/levels': typeof LevelsRoute
@@ -92,6 +100,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/dialogues': typeof DialoguesRoute
   '/errors': typeof ErrorsRoute
+  '/games': typeof GamesRoute
   '/gemini': typeof GeminiRoute
   '/lessons': typeof LessonsRoute
   '/levels': typeof LevelsRoute
@@ -105,6 +114,7 @@ export interface FileRouteTypes {
     | '/'
     | '/dialogues'
     | '/errors'
+    | '/games'
     | '/gemini'
     | '/lessons'
     | '/levels'
@@ -116,6 +126,7 @@ export interface FileRouteTypes {
     | '/'
     | '/dialogues'
     | '/errors'
+    | '/games'
     | '/gemini'
     | '/lessons'
     | '/levels'
@@ -127,6 +138,7 @@ export interface FileRouteTypes {
     | '/'
     | '/dialogues'
     | '/errors'
+    | '/games'
     | '/gemini'
     | '/lessons'
     | '/levels'
@@ -139,6 +151,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DialoguesRoute: typeof DialoguesRoute
   ErrorsRoute: typeof ErrorsRoute
+  GamesRoute: typeof GamesRoute
   GeminiRoute: typeof GeminiRoute
   LessonsRoute: typeof LessonsRoute
   LevelsRoute: typeof LevelsRoute
@@ -168,6 +181,13 @@ declare module '@tanstack/react-router' {
       path: '/errors'
       fullPath: '/errors'
       preLoaderRoute: typeof ErrorsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/games': {
+      id: '/games'
+      path: '/games'
+      fullPath: '/games'
+      preLoaderRoute: typeof GamesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/gemini': {
@@ -219,6 +239,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DialoguesRoute: DialoguesRoute,
   ErrorsRoute: ErrorsRoute,
+  GamesRoute: GamesRoute,
   GeminiRoute: GeminiRoute,
   LessonsRoute: LessonsRoute,
   LevelsRoute: LevelsRoute,
