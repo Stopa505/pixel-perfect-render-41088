@@ -77,3 +77,58 @@ export const analyzeEssay = createServerFn({ method: "POST" })
       return { ok: false, message: "Gemini вернул неожиданный ответ — попробуйте ещё раз" };
     }
   });
+
+const Turn = z.object({
+  reply: z.string(),
+  reply_ru: z.string(),
+  correction: z.string().nullable().optional(),
+  explanation: z.string().nullable().optional(),
+  hint: z.string(),
+});
+export type DialogueTurn = z.infer<typeof Turn>;
+
+export const dialogueTurn = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .validator((d) =>
+    z.object({
+      scenario: z.string().max(200),
+      role: z.string().max(400),
+      block: z.enum(["A", "B", "C"]),
+      history: z.array(z.object({ role: z.enum(["user", "ai"]), text: z.string().max(2000) })).max(60),
+      apiKey: z.string().max(4000).optional(),
+    }).parse(d),
+  )
+  .handler(async ({ data }): Promise<{ ok: true; turn: DialogueTurn } | { ok: false; message: string }> => {
+    const key = data.apiKey?.trim() || process.env["GEMINI_API_KEY"];
+    if (!key) return { ok: false, message: "Ключ Gemini не задан — добавьте его в разделе «Интеграция с Gemini»" };
+    const level = { A: "A1–A2 (very simple words, short sentences)", B: "B1–B2 (natural everyday English)", C: "C1–C2 (rich, nuanced, idiomatic English)" }[data.block];
+    const last = data.history[data.history.length - 1];
+    const prompt = `You are a roleplay partner for an English learner. Scenario: "${data.scenario}". Your role: ${data.role}. Learner level: ${level}.
+Stay in character, keep replies to 1–3 sentences, and move the conversation forward with a question.
+${last?.role === "user" ? `Check the learner's LAST message for grammar/vocabulary mistakes. If there are mistakes, put the corrected sentence in "correction" and a short explanation IN RUSSIAN in "explanation"; otherwise set both to null.` : `This is the start: open the conversation in character. Set correction and explanation to null.`}
+"reply_ru" is a Russian translation of your reply. "hint" is one example English sentence the learner could say next (level-appropriate).
+Reply strictly as JSON: {"reply":"","reply_ru":"","correction":null,"explanation":null,"hint":""}`;
+    const contents = [
+      { role: "user", parts: [{ text: prompt }] },
+      ...data.history.map((m) => ({ role: m.role === "ai" ? "model" : "user", parts: [{ text: m.text }] })),
+    ];
+    if (last?.role !== "user") contents.push({ role: "user", parts: [{ text: "(start)" }] });
+    const res = await fetch(`${BASE}/models/${MODEL}:generateContent`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...authHeaders(key) },
+      body: JSON.stringify({ contents, generationConfig: { responseMimeType: "application/json" } }),
+    });
+    if (!res.ok) {
+      console.error("Gemini dialogue error", res.status, (await res.text()).slice(0, 500));
+      if (res.status === 429) return { ok: false, message: "Лимит Gemini исчерпан, попробуйте позже" };
+      if (res.status === 400 || res.status === 403) return { ok: false, message: "Gemini отклонил запрос — проверьте ключ" };
+      return { ok: false, message: `Gemini временно недоступен (${res.status})` };
+    }
+    const json = (await res.json()) as { candidates?: { content?: { parts?: { text?: string }[] } }[] };
+    const text = json.candidates?.[0]?.content?.parts?.map((p) => p.text ?? "").join("") ?? "";
+    try {
+      return { ok: true, turn: Turn.parse(JSON.parse(text)) };
+    } catch {
+      return { ok: false, message: "Gemini вернул неожиданный ответ — попробуйте ещё раз" };
+    }
+  });

@@ -4,17 +4,19 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { logStudySeconds } from "@/lib/api";
 import { AuthScreen } from "@/components/AuthScreen";
-import { BookOpen, Bug, Film, GraduationCap, LayoutGrid, Layers, LogOut, Menu, NotebookText, Sparkles, X } from "lucide-react";
+import { BookOpen, Bug, Film, GraduationCap, LayoutGrid, Layers, LogOut, Menu, MessagesSquare, Puzzle, NotebookText, Sparkles, X } from "lucide-react";
 
 export const nav = [
   { to: "/", label: "Личный кабинет", icon: LayoutGrid },
   { to: "/placement", label: "Placement Test", icon: GraduationCap },
   { to: "/levels", label: "Уровни A · B · C", icon: Layers },
-  { to: "/lessons", label: "Уроки", icon: BookOpen },
+  { to: "/lessons", label: "Уроки и конструктор", icon: BookOpen },
+  { to: "/dialogues", label: "ИИ-диалоги", icon: MessagesSquare },
+  { to: "/games", label: "Игры со словами", icon: Puzzle },
   { to: "/errors", label: "Мои ошибки", icon: Bug },
   { to: "/reviews", label: "Кино-рецензии", icon: Film },
   { to: "/rules", label: "Справочник правил", icon: NotebookText },
-  { to: "/gemini", label: "Интеграция с Gemini", icon: Sparkles },
+  { to: "/gemini", label: "Настройки Gemini", icon: Sparkles },
 ] as const;
 
 function Logo() {
@@ -57,7 +59,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     <div className="min-h-dvh w-full overflow-x-clip">
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r bg-card lg:flex">
         <div className="border-b px-5 py-5"><Logo /></div>
-        <nav className="flex-1 space-y-1 p-3">
+        <nav className="min-h-0 flex-1 space-y-1 overflow-y-auto p-3">
           {nav.map(({ to, label, icon: Icon }) => (
             <Link
               key={to}

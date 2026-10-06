@@ -10,7 +10,9 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DialoguesRouteImport } from './routes/dialogues'
 import { Route as ErrorsRouteImport } from './routes/errors'
+import { Route as GamesRouteImport } from './routes/games'
 import { Route as GeminiRouteImport } from './routes/gemini'
 import { Route as LessonsRouteImport } from './routes/lessons'
 import { Route as LevelsRouteImport } from './routes/levels'
@@ -23,9 +25,19 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DialoguesRoute = DialoguesRouteImport.update({
+  id: '/dialogues',
+  path: '/dialogues',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ErrorsRoute = ErrorsRouteImport.update({
   id: '/errors',
   path: '/errors',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GamesRoute = GamesRouteImport.update({
+  id: '/games',
+  path: '/games',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GeminiRoute = GeminiRouteImport.update({
@@ -61,7 +73,9 @@ const RulesRoute = RulesRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/dialogues': typeof DialoguesRoute
   '/errors': typeof ErrorsRoute
+  '/games': typeof GamesRoute
   '/gemini': typeof GeminiRoute
   '/lessons': typeof LessonsRoute
   '/levels': typeof LevelsRoute
@@ -71,7 +85,9 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/dialogues': typeof DialoguesRoute
   '/errors': typeof ErrorsRoute
+  '/games': typeof GamesRoute
   '/gemini': typeof GeminiRoute
   '/lessons': typeof LessonsRoute
   '/levels': typeof LevelsRoute
@@ -82,7 +98,9 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/dialogues': typeof DialoguesRoute
   '/errors': typeof ErrorsRoute
+  '/games': typeof GamesRoute
   '/gemini': typeof GeminiRoute
   '/lessons': typeof LessonsRoute
   '/levels': typeof LevelsRoute
@@ -94,7 +112,9 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/dialogues'
     | '/errors'
+    | '/games'
     | '/gemini'
     | '/lessons'
     | '/levels'
@@ -104,7 +124,9 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/dialogues'
     | '/errors'
+    | '/games'
     | '/gemini'
     | '/lessons'
     | '/levels'
@@ -114,7 +136,9 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/dialogues'
     | '/errors'
+    | '/games'
     | '/gemini'
     | '/lessons'
     | '/levels'
@@ -125,7 +149,9 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  DialoguesRoute: typeof DialoguesRoute
   ErrorsRoute: typeof ErrorsRoute
+  GamesRoute: typeof GamesRoute
   GeminiRoute: typeof GeminiRoute
   LessonsRoute: typeof LessonsRoute
   LevelsRoute: typeof LevelsRoute
@@ -143,11 +169,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dialogues': {
+      id: '/dialogues'
+      path: '/dialogues'
+      fullPath: '/dialogues'
+      preLoaderRoute: typeof DialoguesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/errors': {
       id: '/errors'
       path: '/errors'
       fullPath: '/errors'
       preLoaderRoute: typeof ErrorsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/games': {
+      id: '/games'
+      path: '/games'
+      fullPath: '/games'
+      preLoaderRoute: typeof GamesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/gemini': {
@@ -197,7 +237,9 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  DialoguesRoute: DialoguesRoute,
   ErrorsRoute: ErrorsRoute,
+  GamesRoute: GamesRoute,
   GeminiRoute: GeminiRoute,
   LessonsRoute: LessonsRoute,
   LevelsRoute: LevelsRoute,
