@@ -116,7 +116,7 @@ function Cards({ words, onKnow }: { words: Word[]; onKnow: () => void }) {
   const card = deck[0];
   const next = (know: boolean) => {
     if (know) { onKnow(); setKnown((k) => k + 1); setDeck((d) => d.slice(1)); }
-    else setDeck((d) => [...d.slice(1), d[0]]);
+    else setDeck((d) => (d[0] ? [...d.slice(1), d[0]] : d));
     setFlip(false);
   };
   if (!card) return (
@@ -149,16 +149,16 @@ function Anagram({ words, onEnd }: { words: Word[]; onEnd: (score: number) => vo
   const [state, setState] = useState<"idle" | "play" | "end">("idle");
   const [time, setTime] = useState(ROUND);
   const [score, setScore] = useState(0);
-  const [word, setWord] = useState<Word>(words[0]);
+  const [word, setWord] = useState<Word>(words[0] as Word);
   const [letters, setLetters] = useState<string[]>([]);
   const [input, setInput] = useState("");
   const [flash, setFlash] = useState<"ok" | "bad" | null>(null);
   const scoreRef = useRef(0);
 
   const nextWord = () => {
-    const w = words[Math.floor(Math.random() * words.length)];
+    const w = words[Math.floor(Math.random() * words.length)] as Word;
     let l = shuffle(w.en.split(""));
-    if (l.join("") === w.en && w.en.length > 1) l = [...l.slice(1), l[0]];
+    if (l.join("") === w.en && w.en.length > 1) l = [...l.slice(1), l[0] as string];
     setWord(w); setLetters(l); setInput("");
   };
   const start = () => { scoreRef.current = 0; setScore(0); setTime(ROUND); nextWord(); setState("play"); };
