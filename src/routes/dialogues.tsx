@@ -22,7 +22,7 @@ export const Route = createFileRoute("/dialogues")({
   component: Dialogues,
 });
 
-type Msg = { role: "user" | "ai"; text: string; ru?: string; correction?: string | null; explanation?: string | null };
+type Msg = { role: "user" | "ai"; text: string; ru?: string; correction?: string | null | undefined; explanation?: string | null | undefined };
 
 function Dialogues() {
   const [block, setBlock] = useState<LevelBlockId>("A");
@@ -93,7 +93,7 @@ function Chat({ scenario, block, onBack }: { scenario: Scenario; block: LevelBlo
       const t = r.turn;
       const next = [...history];
       const last = next[next.length - 1];
-      if (last?.role === "user") next[next.length - 1] = { ...last, correction: t.correction, explanation: t.explanation };
+      if (last?.role === "user") next[next.length - 1] = { ...last, correction: t.correction ?? null, explanation: t.explanation ?? null };
       setMsgs([...next, { role: "ai", text: t.reply, ru: t.reply_ru }]);
       setHint(t.hint);
     } catch (e) {
