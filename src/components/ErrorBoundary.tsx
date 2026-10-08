@@ -4,17 +4,17 @@ type Props = { children: ReactNode };
 type State = { error: Error | null };
 
 export class ErrorBoundary extends Component<Props, State> {
-  override state: State = { error: null };
+  state: State = { error: null };
 
   static getDerivedStateFromError(error: Error): State {
     return { error };
   }
 
-  override componentDidCatch(error: Error) {
+  componentDidCatch(error: Error) {
     console.error("[ErrorBoundary]", error);
   }
 
-  override render() {
+  render() {
     if (this.state.error) {
       return (
         <div className="flex min-h-dvh items-center justify-center bg-background px-4">

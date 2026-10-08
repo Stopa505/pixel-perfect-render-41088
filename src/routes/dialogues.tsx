@@ -31,7 +31,7 @@ function Dialogues() {
   const status = useServerFn(geminiStatus);
 
   useEffect(() => {
-    setBlock(getStoredLevel().block);
+    try { setBlock(getStoredLevel().block); } catch { /* keep default */ }
     const local = !!getGeminiKey();
     if (local) setHasKey(true);
     else status().then((r) => setHasKey(r.configured)).catch(() => setHasKey(false));
@@ -52,12 +52,12 @@ function Dialogues() {
           <div className="mb-4 flex flex-wrap gap-2">
             {(["A", "B", "C"] as const).map((b) => (
               <button key={b} onClick={() => setBlock(b)} className={`min-h-11 rounded-lg border px-4 text-sm ${block === b ? "border-primary bg-accent text-accent-foreground" : "text-muted-foreground"}`}>
-                Блок {b} · {levelBlocks[b].levels?.map((l) => l.code).join("/") ?? ""}
+                Блок {b} · {levelBlocks[b].levels.map((l) => l.code).join("/")}
               </button>
             ))}
           </div>
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-            {scenarios[block].map((s) => (
+            {(scenarios[block] ?? []).map((s) => (
               <button key={s.id} onClick={() => setScenario(s)} className="panel rise min-w-0 p-5 text-left transition-colors hover:border-primary/60">
                 <span className="text-3xl">{s.emoji}</span>
                 <h2 className="mt-3 text-lg font-semibold">{s.title}</h2>
@@ -106,7 +106,7 @@ function Chat({ scenario, block, onBack }: { scenario: Scenario; block: LevelBlo
   useEffect(() => {
     if (started.current) return;
     started.current = true;
-    void send([]);
+    void send([]).catch(() => setError("Не удалось начать диалог"));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth", block: "end" }); }, [msgs, busy]);
